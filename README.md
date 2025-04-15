@@ -4,7 +4,7 @@
 
 ## 快速开始
 ```
-bash <(wget -qO- -o- https://github.com/xugui0821/xray-multiip-setup/raw/main/start.sh)
+bash <(wget -qO- -o- https://github.com/xugui0821/x-ui-multiip-setup/raw/main/start.sh)
 ```
 
 配置完成后使用生成的端口创建添加入站即可使用对应IP出站。
