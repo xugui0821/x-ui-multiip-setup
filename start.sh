@@ -178,7 +178,7 @@ save_config() {
     echo -e "\n✅ 多 IP 配置完成："
     for i in "${!IP_LIST[@]}"; do
         port=$((START_PORT + i))
-        echo "📦 端口 inbound-$port 已绑定出站 IP：${IP_LIST[$i]}"
+        echo "📦 端口:$port 已绑定出站 IP：${IP_LIST[$i]}"
     done
 }
 
