@@ -1,6 +1,6 @@
 # xray-multiip-setup
 
-自动化生成X-UI/Xray多IP出口配置的工具
+自动化生成X-UI多IP出口配置的工具
 
 ## 快速开始
 ```
