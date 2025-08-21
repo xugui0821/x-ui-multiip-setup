@@ -45,13 +45,14 @@ main() {
     echo "🚀 开始下载并运行 GOST..."
     get_config_params
 
-    # 创建一个临时目录用于存放 gost 可执行文件和配置文件
-    TEMP_DIR=$(mktemp -d)
-    GOST_PATH="$TEMP_DIR/gost"
-    CONFIG_FILE="$TEMP_DIR/config.json"
+    # 临时目录和配置文件路径
+    CONFIG_FILE="/tmp/config.json"
+
+    # 下载 gost 可执行文件到 /tmp
+    GOST_PATH="/tmp/gost"
     
     # 退出时清理临时文件
-    trap "echo '🧹 清理临时文件...'; rm -rf '$TEMP_DIR'; echo '✅ 清理完成'; exit" INT TERM EXIT
+    trap "echo '🧹 清理临时文件...'; rm -f '$GOST_PATH' '$CONFIG_FILE'; echo '✅ 清理完成'; exit" INT TERM EXIT
 
     # 下载 gost
     echo "⬇️ 下载最新版本 gost 中..."
@@ -67,7 +68,7 @@ main() {
     echo "🔎 gost 版本：$("$GOST_PATH" -V)"
 
     # 写入 config.json
-    echo "📄 创建配置: config.json"
+    echo "📄 创建配置: $CONFIG_FILE"
     cat > "$CONFIG_FILE" <<EOF
 {
     "addr": "$SERVER_ADDR",
