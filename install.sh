@@ -1,92 +1,85 @@
 #!/bin/bash
 
+
+
 # 下载地址
+
 DOWNLOAD_URL="https://github.com/bqlpfy/flux-panel/releases/download/gost-latest/gost"
-COUNTRY=$(curl -s https://ipinfo.io/country)
-if [ "$COUNTRY" = "CN" ]; then
-    # 拼接 URL
-    DOWNLOAD_URL="https://ghfast.top/${DOWNLOAD_URL}"
+
+INSTALL_DIR="$HOME/.gost"
+
+
+
+# 获取命令行参数
+
+SERVER_ADDR="$1"
+
+SECRET="$2"
+
+
+
+# 检查参数是否传入
+
+if [ -z "$SERVER_ADDR" ] || [ -z "$SECRET" ]; then
+
+echo "❌ 请提供服务器地址和密钥"
+
+echo "用法：./gost.sh <服务器地址> <密钥>"
+
+exit 1
+
 fi
 
-# 获取用户输入的配置参数
-get_config_params() {
-    if [[ -z "$SERVER_ADDR" || -z "$SECRET" ]]; then
-        echo "请输入配置参数："
-        if [[ -z "$SERVER_ADDR" ]]; then
-            read -p "服务器地址: " SERVER_ADDR
-        fi
-        if [[ -z "$SECRET" ]]; then
-            read -p "密钥: " SECRET
-        fi
-        if [[ -z "$SERVER_ADDR" || -z "$SECRET" ]]; then
-            echo "❌ 参数不完整，操作取消。"
-            exit 1
-        fi
-    fi
-}
 
-# 解析命令行参数
-while getopts "a:s:" opt; do
-    case $opt in
-        a) SERVER_ADDR="$OPTARG" ;;
-        s) SECRET="$OPTARG" ;;
-        *) echo "❌ 无效参数"; exit 1 ;;
-    esac
-done
 
-# 主逻辑
-main() {
-    # 检查是否以root权限运行
-    if [ "$EUID" -ne 0 ]; then
-        echo "请以root用户或使用 sudo 运行此脚本。"
-        exit 1
-    fi
+# 确保安装目录存在
 
-    echo "🚀 开始下载并运行 GOST..."
-    get_config_params
+mkdir -p "$INSTALL_DIR"
 
-    # 临时目录和配置文件路径
-    CONFIG_FILE="/tmp/config.json"
 
-    # 下载 gost 可执行文件到 /tmp
-    GOST_PATH="/tmp/gost"
-    
-    # 退出时清理临时文件
-    trap "echo '🧹 清理临时文件...'; rm -f '$GOST_PATH' '$CONFIG_FILE'; echo '✅ 清理完成'; exit" INT TERM EXIT
 
-    # 下载 gost
-    echo "⬇️ 下载最新版本 gost 中..."
-    curl -L "$DOWNLOAD_URL" -o "$GOST_PATH"
-    if [[ ! -f "$GOST_PATH" || ! -s "$GOST_PATH" ]]; then
-        echo "❌ 下载失败，请检查网络或下载链接。"
-        exit 1
-    fi
-    chmod +x "$GOST_PATH"
-    echo "✅ 下载完成"
+# 下载 gost
 
-    # 打印版本
-    echo "🔎 gost 版本：$("$GOST_PATH" -V)"
+echo "⬇️ 下载 gost 中..."
 
-    # 写入 config.json
-    echo "📄 创建配置: $CONFIG_FILE"
-    cat > "$CONFIG_FILE" <<EOF
+curl -L "$DOWNLOAD_URL" -o "$INSTALL_DIR/gost"
+
+if [[ ! -f "$INSTALL_DIR/gost" || ! -s "$INSTALL_DIR/gost" ]]; then
+
+echo "❌ 下载失败，请检查网络或下载链接。"
+
+exit 1
+
+fi
+
+chmod +x "$INSTALL_DIR/gost"
+
+echo "✅ 下载完成"
+
+
+
+# 写入 config.json (创建新配置文件)
+
+CONFIG_FILE="$INSTALL_DIR/config.json"
+
+echo "📄 创建新配置: config.json"
+
+cat > "$CONFIG_FILE" <<EOF
+
 {
-    "addr": "$SERVER_ADDR",
-    "secret": "$SECRET"
+
+"addr": "$SERVER_ADDR",
+
+"secret": "$SECRET"
+
 }
+
 EOF
-    chmod 600 "$CONFIG_FILE"
 
-    echo ""
-    echo "==============================================="
-    echo "🚀 GOST 正在以前台模式运行..."
-    echo "使用 Ctrl+C 退出。"
-    echo "==============================================="
-    echo ""
 
-    # 前台运行 gost，并使用 -C 参数指定配置文件路径
-    "$GOST_PATH" -C "$CONFIG_FILE"
-}
 
-# 执行主函数
-main
+# 直接前台运行 gost
+
+echo "🚀 启动 gost..."
+
+"$INSTALL_DIR/gost" -C "$CONFIG_FILE"
