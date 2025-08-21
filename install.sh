@@ -45,7 +45,7 @@ main() {
     echo "🚀 开始下载并运行 GOST..."
     get_config_params
 
-    # 创建一个临时目录用于存放 gost 可执行文件
+    # 创建一个临时目录用于存放 gost 可执行文件和配置文件
     TEMP_DIR=$(mktemp -d)
     GOST_PATH="$TEMP_DIR/gost"
     CONFIG_FILE="$TEMP_DIR/config.json"
