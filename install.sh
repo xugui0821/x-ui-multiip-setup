@@ -6,7 +6,7 @@
 
 DOWNLOAD_URL="https://github.com/bqlpfy/flux-panel/releases/download/gost-latest/gost"
 
-INSTALL_DIR="$HOME/.gost"
+INSTALL_DIR="$HOME/gost"
 
 
 
